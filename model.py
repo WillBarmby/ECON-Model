@@ -10,12 +10,12 @@ def calc_natural_unemp(params: Params):
     return (wage_markup + labor_friction) / alpha
 
 
-def calc_natural_output(params: Params, natural_unemp):
+def calc_natural_output(params: Params, natural_unemp: float) -> float:
     labor_force = params["L"]
     return labor_force * (1 - natural_unemp)
 
 
-def calc_output(params: Params, real_rate):
+def calc_output(params: Params, real_rate: float) -> float:
     c_0 = params["c_0"]
     c_1 = params["c_1"]
     b_0 = params["b_0"]
@@ -30,18 +30,20 @@ def calc_output(params: Params, real_rate):
     ) / (1 - c_1 - b_1)
 
 
-def calc_inflation(params: Params, expected_inflation, output, natural_output):
+def calc_inflation(
+    params: Params, expected_inflation: float, output: float, natural_output: float
+) -> float:
     labor_force = params["L"]
     alpha = params["alpha"]
 
     return expected_inflation + alpha * (output - natural_output) / labor_force
 
 
-def calc_real_rate(nominal_rate, expected_inflation):
+def calc_real_rate(nominal_rate: float, expected_inflation: float) -> float:
     return nominal_rate - expected_inflation
 
 
-def calc_natural_rate(params: Params, natural_output):
+def calc_natural_rate(params: Params, natural_output: float) -> float:
     c_0 = params["c_0"]
     c_1 = params["c_1"]
 
@@ -57,7 +59,13 @@ def calc_natural_rate(params: Params, natural_output):
     ) / b_2 - risk_premium
 
 
-def set_nominal_rate(params: Params, real_rate, inflation, output, natural_output):
+def set_nominal_rate(
+    params: Params,
+    real_rate: float,
+    inflation: float,
+    output: float,
+    natural_output: float,
+) -> float:
     target_inflation = params["pi_target"]
     phi_pi = params["phi_pi"]
     phi_y = params["phi_y"]
@@ -70,11 +78,11 @@ def set_nominal_rate(params: Params, real_rate, inflation, output, natural_outpu
     )
 
 
-def anchored_expectations(inflation):
+def anchored_expectations(inflation: float) -> float:
     return inflation
 
 
-def apply_shocks(params: Params, shocks_t: pd.DataFrame):
+def apply_shocks(params: Params, shocks_t: pd.DataFrame) -> Params:
     updated = params.copy()
     for _, shock in shocks_t.iterrows():
         parameter = shock["parameter"]

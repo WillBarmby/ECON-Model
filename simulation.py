@@ -8,7 +8,7 @@ from cli import build_parser
 import pandas as pd
 
 
-def run_simulation(params: Params, shocks: pd.DataFrame, t_sim: int):
+def run_simulation(params: Params, shocks: pd.DataFrame, t_sim: int) -> pd.DataFrame:
 
     states: list[State] = []
     state = find_initial_state(params)
