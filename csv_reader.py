@@ -1,5 +1,4 @@
 import csv
-from config.paths import PARAMETERS
 from params import Params
 from typing import cast
 
@@ -59,8 +58,3 @@ def validate_params(parsed: ParsedParams) -> Params:
             raise TypeError(f"{key} must be float")
 
     return cast(Params, parsed)
-
-
-if __name__ == "__main__":
-    dict = read_parameters(str(PARAMETERS))
-    print(dict)

@@ -1,4 +1,5 @@
-from config.paths import PARAMETERS, SHOCKS
+from pathlib import Path
+from config.paths import RESOURCES_DIR
 from csv_reader import read_parameters, validate_params
 from model import find_initial_state, apply_shocks, step
 from params import Params
@@ -29,11 +30,31 @@ if __name__ == "__main__":
         type=non_negative_int,
         default=10,
     )
+    parser.add_argument(
+        "--params",
+        "-p",
+        help="csv file containing parameters (default: parameters_baseline.csv). Must be located in resources folder",
+        default="parameters_baseline.csv",
+    )
+    parser.add_argument(
+        "--shocks",
+        "-s",
+        help="csv file containing shocks (default: shocks_baseline.csv). Must be located in resources folder",
+        default="shocks_baseline.csv",
+    )
     args = parser.parse_args()
-    raw_params = read_parameters(str(PARAMETERS))
+    params_file: Path = RESOURCES_DIR / args.params
+    shocks_file: Path = RESOURCES_DIR / args.shocks
+    if not params_file.exists():
+        raise FileNotFoundError(f"No file found for params: {params_file}")
+    if not shocks_file.exists():
+        raise FileNotFoundError(f"No file found for shocks: {shocks_file}")
+
+    raw_params = read_parameters(str(params_file))
     params: Params = validate_params(raw_params)
+
     t_sim = args.t
-    df = pd.read_csv(str(SHOCKS)).set_index("t")
+    df = pd.read_csv(str(shocks_file)).set_index("t")
     states: list[State] = []
     state = find_initial_state(params)
     states.append(state)
