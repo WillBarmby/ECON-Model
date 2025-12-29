@@ -1,5 +1,4 @@
 Technical Name	Variable Name	Value
-Number of periods	T_sim	20
 Autonomous consumption	c_0	20
 Marginal propensity to consume	c_1	0.6
 Taxes (lump sum)	T	20
