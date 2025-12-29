@@ -1,5 +1,5 @@
 Technical Name	Variable Name	Value
-Number of periods	T_sim	10
+Number of periods	T_sim	20
 Autonomous consumption	c_0	20
 Marginal propensity to consume	c_1	0.6
 Taxes (lump sum)	T	20
@@ -14,5 +14,5 @@ Labor market friction / institutions	z	0.02
 Phillips curve slope	alpha	.5
 Inflation target	pi_target	0.02
 Initial expected inflation	pi_e_0	0.02
-Inflation response coefficient	phi_pi	0.5
+Inflation response coefficient	phi_pi	1.5
 Output gap response coefficient	phi_y	0.5	

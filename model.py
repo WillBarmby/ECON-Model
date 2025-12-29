@@ -72,35 +72,79 @@ def anchored_expectations(inflation):
     return inflation
 
 
-def run_static_simulation(params: dict, t_sim):
-    rows = []
-    for t in range(t_sim):
-        pi_e_0 = params["pi_e_0"]
-        u_n = calc_natural_unemp(params)
-        y_n = calc_natural_output(params, u_n)
-        r_n = calc_natural_rate(params=params, natural_output=y_n)
-        i_0 = r_n + params["pi_target"]
-        r_t = calc_real_rate(nominal_rate=i_0, expected_inflation=pi_e_0)
-        y_t = calc_output(params=params, real_rate=r_n)
-        pi_t = calc_inflation(
-            params=params, expected_inflation=pi_e_0, output=y_t, natural_output=y_t
-        )
-        pi_e = anchored_expectations(pi_t)
-        i_t = set_nominal_rate(
-            params, real_rate=r_n, inflation=pi_t, output=y_n, natural_output=y_n
-        )
+def apply_shocks(params: dict, shocks_t: pd.DataFrame):
+    updated = params.copy()
+    for _, shock in shocks_t.iterrows():
+        parameter = shock["parameter"]
+        operation = shock["operation"]
+        value = shock["value"]
 
-        rows.append(
-            {
-                "t": t,
-                "u_n": u_n,
-                "y_n": y_n,
-                "r_n": r_n,
-                "i_t": i_t,
-                "y_t": y_t,
-                "pi_t": pi_t,
-                "pi_e": pi_e,
-            }
-        )
+        if operation == "add":
+            updated[parameter] += value
+        elif operation == "mul":
+            updated[parameter] *= value
+        elif operation == "replace":
+            updated[parameter] = value
+        else:
+            raise ValueError(f"unknown operations")
+    return updated
 
-    return pd.DataFrame(rows).set_index("t")
+
+def find_initial_state(params: dict) -> dict:
+    pi_e_0 = params["pi_e_0"]
+    u_n = calc_natural_unemp(params)
+    y_n = calc_natural_output(params, u_n)
+    r_n = calc_natural_rate(params=params, natural_output=y_n)
+    y_t = calc_output(params=params, real_rate=r_n)
+    pi_t = calc_inflation(
+        params=params, expected_inflation=pi_e_0, output=y_t, natural_output=y_n
+    )
+    pi_e = anchored_expectations(pi_t)
+    i_t = set_nominal_rate(
+        params, real_rate=r_n, inflation=pi_t, output=y_n, natural_output=y_n
+    )
+
+    initial_state = {
+        "t": 0,
+        "u_n": u_n,
+        "y_n": y_n,
+        "r_n": r_n,
+        "i_t": i_t,
+        "y_t": y_t,
+        "pi_t": pi_t,
+        "pi_e": pi_e,
+    }
+    return initial_state
+
+
+def step(params_t: dict, prev_state: dict) -> dict:
+
+    u_n = calc_natural_unemp(params_t)
+    y_n = calc_natural_output(params_t, u_n)
+    r_n = calc_natural_rate(params=params_t, natural_output=y_n)
+    r_t = calc_real_rate(
+        nominal_rate=prev_state["i_t"], expected_inflation=prev_state["pi_e"]
+    )
+    y_t = calc_output(params=params_t, real_rate=r_t)
+    pi_t = calc_inflation(
+        params=params_t,
+        expected_inflation=prev_state["pi_e"],
+        output=y_t,
+        natural_output=y_n,
+    )
+    pi_e = anchored_expectations(pi_t)
+    i_t = set_nominal_rate(
+        params_t, real_rate=r_n, inflation=pi_t, output=y_n, natural_output=y_n
+    )
+
+    state = {
+        "t": prev_state["t"] + 1,
+        "u_n": u_n,
+        "y_n": y_n,
+        "r_n": r_n,
+        "i_t": i_t,
+        "y_t": y_t,
+        "pi_t": pi_t,
+        "pi_e": pi_e,
+    }
+    return state
