@@ -1,19 +1,21 @@
 import pandas as pd
+from state import State
+from params import Params
 
 
-def calc_natural_unemp(params: dict):
+def calc_natural_unemp(params: Params):
     wage_markup = params["m"]
     labor_friction = params["z"]
     alpha = params["alpha"]
     return (wage_markup + labor_friction) / alpha
 
 
-def calc_natural_output(params: dict, natural_unemp):
+def calc_natural_output(params: Params, natural_unemp):
     labor_force = params["L"]
     return labor_force * (1 - natural_unemp)
 
 
-def calc_output(params: dict, real_rate):
+def calc_output(params: Params, real_rate):
     c_0 = params["c_0"]
     c_1 = params["c_1"]
     b_0 = params["b_0"]
@@ -28,7 +30,7 @@ def calc_output(params: dict, real_rate):
     ) / (1 - c_1 - b_1)
 
 
-def calc_inflation(params: dict, expected_inflation, output, natural_output):
+def calc_inflation(params: Params, expected_inflation, output, natural_output):
     labor_force = params["L"]
     alpha = params["alpha"]
 
@@ -39,7 +41,7 @@ def calc_real_rate(nominal_rate, expected_inflation):
     return nominal_rate - expected_inflation
 
 
-def calc_natural_rate(params: dict, natural_output):
+def calc_natural_rate(params: Params, natural_output):
     c_0 = params["c_0"]
     c_1 = params["c_1"]
 
@@ -55,7 +57,7 @@ def calc_natural_rate(params: dict, natural_output):
     ) / b_2 - risk_premium
 
 
-def set_nominal_rate(params: dict, real_rate, inflation, output, natural_output):
+def set_nominal_rate(params: Params, real_rate, inflation, output, natural_output):
     target_inflation = params["pi_target"]
     phi_pi = params["phi_pi"]
     phi_y = params["phi_y"]
@@ -72,7 +74,7 @@ def anchored_expectations(inflation):
     return inflation
 
 
-def apply_shocks(params: dict, shocks_t: pd.DataFrame):
+def apply_shocks(params: Params, shocks_t: pd.DataFrame):
     updated = params.copy()
     for _, shock in shocks_t.iterrows():
         parameter = shock["parameter"]
@@ -90,7 +92,7 @@ def apply_shocks(params: dict, shocks_t: pd.DataFrame):
     return updated
 
 
-def find_initial_state(params: dict) -> dict:
+def find_initial_state(params: Params) -> State:
     pi_e_0 = params["pi_e_0"]
     u_n = calc_natural_unemp(params)
     y_n = calc_natural_output(params, u_n)
@@ -104,7 +106,7 @@ def find_initial_state(params: dict) -> dict:
         params, real_rate=r_n, inflation=pi_t, output=y_n, natural_output=y_n
     )
 
-    initial_state = {
+    initial_state: State = {
         "t": 0,
         "u_n": u_n,
         "y_n": y_n,
@@ -117,7 +119,7 @@ def find_initial_state(params: dict) -> dict:
     return initial_state
 
 
-def step(params_t: dict, prev_state: dict) -> dict:
+def step(params_t: Params, prev_state: State) -> State:
 
     u_n = calc_natural_unemp(params_t)
     y_n = calc_natural_output(params_t, u_n)
@@ -137,7 +139,7 @@ def step(params_t: dict, prev_state: dict) -> dict:
         params_t, real_rate=r_n, inflation=pi_t, output=y_n, natural_output=y_n
     )
 
-    state = {
+    state: State = {
         "t": prev_state["t"] + 1,
         "u_n": u_n,
         "y_n": y_n,
