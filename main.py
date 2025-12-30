@@ -8,7 +8,8 @@ from cli import build_parser
 from simulation import run_simulation
 import pandas as pd
 
-if __name__ == "__main__":
+
+def main() -> pd.DataFrame:
     parser = build_parser()
     args = parser.parse_args()
     t_sim = args.t
@@ -27,4 +28,9 @@ if __name__ == "__main__":
     df_final = run_simulation(params=params, shocks=shocks, t_sim=t_sim)
     df_final = df_final.rename(columns={"y_n": "Y_n", "y_t": "Y_t"})
     df_final = df_final[["Y_n", "r_n", "pi_t", "pi_e", "i_t", "Y_t"]]
+    return df_final
+
+
+if __name__ == "__main__":
+    df_final = main()
     print(df_final)
