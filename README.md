@@ -18,7 +18,7 @@ This program is operated from the command line.
 1. Navigate to project root
 2. Type and enter `python main.py`
 	1. This runs with the defaults: 
-		1. The simulation runs for 10 periods ($T= 10$)
+		1. The simulation runs for 10 periods ($T = 10$)
 		2. The parameters are stored in `params_baseline.csv`
 		3. The shocks are stored in `shocks_baseline.csv`
 3. Each of these defaults can be modified with the following tags:
@@ -79,6 +79,6 @@ At present, the model prints the rows of a `pandas` `DataFrame` after it runs, c
 ## Forthcoming Extensions
 - Plots and animations for simulation results
 - CLI tags for pluggable/replaceable assumptions, such as:
-	- lagged vs. up to date expectations
-	- different central bank policy
+	- lagged vs. up-to-date expectations
+	- alternative central bank policy rules
 	- different ways for inflation expectations to be set over time
