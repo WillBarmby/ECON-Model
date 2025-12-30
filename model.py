@@ -111,7 +111,7 @@ def find_initial_state(params: Params) -> State:
     )
     pi_e = anchored_expectations(pi_t)
     i_t = set_nominal_rate(
-        params, real_rate=r_n, inflation=pi_t, output=y_n, natural_output=y_n
+        params, real_rate=r_n, inflation=pi_t, output=y_t, natural_output=y_n
     )
 
     initial_state: State = {
@@ -144,7 +144,7 @@ def step(params_t: Params, prev_state: State) -> State:
     )
     pi_e = anchored_expectations(pi_t)
     i_t = set_nominal_rate(
-        params_t, real_rate=r_n, inflation=pi_t, output=y_n, natural_output=y_n
+        params_t, real_rate=r_n, inflation=pi_t, output=y_t, natural_output=y_n
     )
 
     state: State = {

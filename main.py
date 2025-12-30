@@ -25,4 +25,6 @@ if __name__ == "__main__":
 
     shocks = pd.read_csv(str(shocks_file)).set_index("t")
     df_final = run_simulation(params=params, shocks=shocks, t_sim=t_sim)
+    df_final = df_final.rename(columns={"y_n": "Y_n", "y_t": "Y_t"})
+    df_final = df_final[["Y_n", "r_n", "pi_t", "pi_e", "i_t", "Y_t"]]
     print(df_final)
