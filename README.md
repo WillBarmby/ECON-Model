@@ -1,6 +1,4 @@
-Here is your README rewritten with corrected GitHub-compatible math formatting (proper `$$ ... $$` blocks and `$ ... $` inline math, no broken bracket syntax, and correct spacing):
 # IS–LM–PC Simulator
-
 ## What This Is
 
 This is a simple, discrete-time simulator of the IS–LM–PC model of a closed macroeconomy. The program takes a set of structural parameters and a shock schedule for those parameters, and returns the **time path** of key macroeconomic variables over a specified number of periods.
