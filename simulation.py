@@ -20,5 +20,9 @@ def run_simulation(params: Params, shocks: pd.DataFrame, t_sim: int) -> pd.DataF
         state = step(params_t, prev_state=state)
         states.append(state)
         params = params_t
+    df = pd.DataFrame(states).set_index("t")
 
-    return pd.DataFrame(states).set_index("t")
+    # Expectation formed last period and used this period
+    df["pi_e_used"] = df["pi_e"].shift(1)
+
+    return df

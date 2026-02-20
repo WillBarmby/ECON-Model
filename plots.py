@@ -43,11 +43,11 @@ def make_figure(df: pd.DataFrame):
             },
         ),
         "pi": PlotInfo(
-            df=df[["pi_t", "pi_e"]],
+            df=df[["pi_t", "pi_e_used"]],
             title="Inflation Rates",
             labels={
                 "pi_t": r"Inflation Rate ($\pi_t$)",
-                "pi_e": r"Expected Inflation Rate ($\pi_t^e$)",
+                "pi_e_used": r"Expected Inflation Rate for Period($E_{t-1}[\pi_t]$)",
             },
         ),
     }
