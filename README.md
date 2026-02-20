@@ -32,19 +32,19 @@ Beyond the standard IS–LM–PC assumptions (closed economy, no capital mobilit
 
 The model evolves forward recursively period by period.
 
----
+## Setup (Recommended)
 
-## Requirements
-
-* Python 3.11+
-* Install dependencies with:
+Create and activate a virtual environment:
 
 ```bash
+python -m venv .venv
+source .venv/bin/activate      # macOS / Linux
+# .venv\Scripts\activate       # Windows
+
 pip install -r requirements.txt
+
 ```
-
 ## How To Run
-
 This program is operated from the command line.
 
 1. Navigate to the project root.
