@@ -37,7 +37,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--plot",
         "-g",
-        help="plots the time series and outputs plot file to program directory",
+        help="plots the time series",
         action="store_true",
     )
     return parser
