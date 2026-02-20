@@ -2,6 +2,7 @@ from pathlib import Path
 from config.paths import RESOURCES_DIR
 from csv_reader import read_parameters, validate_params
 from model import find_initial_state, apply_shocks, step
+from plots import display_plots
 from params import Params
 from state import State
 from cli import build_parser
@@ -28,6 +29,10 @@ def main() -> pd.DataFrame:
     df_final = run_simulation(params=params, shocks=shocks, t_sim=t_sim)
     df_final = df_final.rename(columns={"y_n": "Y_n", "y_t": "Y_t"})
     df_final = df_final[["Y_n", "r_n", "pi_t", "pi_e", "i_t", "Y_t"]]
+
+    if args.plot:
+        display_plots(df=df_final)
+
     return df_final
 
 

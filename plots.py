@@ -1,35 +1,65 @@
 import matplotlib.pyplot as plt
-from main import main
 import pandas as pd
+from dataclasses import dataclass, field
 
-if __name__ == "__main__":
 
+@dataclass
+class PlotInfo:
+    df: pd.DataFrame
+    title: str
+    labels: dict[str, str] = field(default_factory=dict)
+
+    def __post_init__(self):
+        for key in self.labels:
+            if key not in self.df.columns:
+                raise ValueError(f"{key} not in dataframe columns")
+
+
+def plot_info(ax, info: PlotInfo):
+    ax.set_title(info.title)
+    for col, label in info.labels.items():
+        ax.plot(info.df.index, info.df[col], label=label)
+    ax.legend()
+
+
+def make_figure(df: pd.DataFrame):
     fig, axs = plt.subplot_mosaic([["Y", "Y"], ["i", "pi"]])
-    df: pd.DataFrame = main()
-    Y_data: pd.DataFrame = df[["Y_n", "Y_t"]]
-    i_data: pd.DataFrame = df[["i_t", "r_n"]]
-    pi_data: pd.DataFrame = df[["pi_t", "pi_e"]]
 
-    axs["Y"].set_title("Output")
-    axs["Y"].plot(Y_data.index, Y_data["Y_n"], label="Natural Output ($Y_n$)")
-    axs["Y"].plot(Y_data.index, Y_data["Y_t"], label="Actual Output ($Y_t$)")
+    specs = {
+        "Y": PlotInfo(
+            df=df[["Y_n", "Y_t"]],
+            title="Output",
+            labels={
+                "Y_n": r"Natural Output ($Y_n$)",
+                "Y_t": r"Actual Output ($Y_t$)",
+            },
+        ),
+        "i": PlotInfo(
+            df=df[["i_t", "r_n"]],
+            title="Interest Rates",
+            labels={
+                "i_t": r"Nominal Interest Rate ($i_t$)",
+                "r_n": r"Real Natural Interest Rate ($r_n$)",
+            },
+        ),
+        "pi": PlotInfo(
+            df=df[["pi_t", "pi_e"]],
+            title="Inflation Rates",
+            labels={
+                "pi_t": r"Inflation Rate ($\pi_t$)",
+                "pi_e": r"Expected Inflation Rate ($\pi_t^e$)",
+            },
+        ),
+    }
 
-    axs["i"].set_title("Interest Rates")
-    axs["i"].plot(i_data.index, i_data["i_t"], label="Nominal Interest Rate ($i_t$)")
-    axs["i"].plot(
-        i_data.index, i_data["r_n"], label="Real Natural Interest Rate ($r_n$)"
-    )
-
-    axs["pi"].set_title("Inflation Rates")
-    axs["pi"].plot(pi_data.index, pi_data["pi_t"], label=r"Inflation Rate ($\pi_t$)")
-    axs["pi"].plot(
-        pi_data.index, pi_data["pi_e"], label=r"Expected Inflation Rate ($\pi_t$)"
-    )
-
-    for ax in axs.values():
-        ax.legend()
+    for key, info in specs.items():
+        plot_info(axs[key], info)
 
     fig.tight_layout()
-    print(df.keys())
-    print(axs.keys())
+    return fig, axs
+
+
+def display_plots(df: pd.DataFrame):
+    fig, _ = make_figure(df=df)
     plt.show()
+    return fig

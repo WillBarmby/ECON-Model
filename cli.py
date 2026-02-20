@@ -34,4 +34,10 @@ def build_parser() -> argparse.ArgumentParser:
         help="csv file containing shocks (default: shocks_baseline.csv). Must be located in resources folder",
         default="shocks_baseline.csv",
     )
+    parser.add_argument(
+        "--plot",
+        "-g",
+        help="plots the time series and outputs plot file to program directory",
+        action="store_true",
+    )
     return parser
