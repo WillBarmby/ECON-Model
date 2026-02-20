@@ -1,3 +1,4 @@
+Here is your README rewritten with corrected GitHub-compatible math formatting (proper `$$ ... $$` blocks and `$ ... $` inline math, no broken bracket syntax, and correct spacing):
 # IS–LM–PC Simulator
 
 ## What This Is
@@ -6,27 +7,31 @@ This is a simple, discrete-time simulator of the IS–LM–PC model of a closed 
 
 The goal is clarity and experimentation rather than structural estimation — the model is transparent, modular, and intended to make counterfactual policy dynamics easy to explore.
 
-
 ## Model Specifications
 
 Beyond the standard IS–LM–PC assumptions (closed economy, no capital mobility, etc.), this implementation makes the following modeling choices:
 
 * **Expectations:** Inflation expectations are naive and adaptive:
-  [
-  E_t[\pi_{t+1}] = \pi_t.
-  ]
-  Expectations formed in period (t-1) enter the Phillips curve for period (t).
+
+$$
+E_t[\pi_{t+1}] = \pi_t
+$$
+
+Expectations formed in period $t-1$ enter the Phillips curve for period $t$.
 
 * **Phillips Curve:** Inflation evolves according to a standard expectations-augmented Phillips curve:
-  [
-  \pi_t = E_{t-1}[\pi_t] + \alpha \cdot \text{output gap}_t.
-  ]
+
+$$
+\pi_t = E_{t-1}[\pi_t] + \alpha \cdot \text{output gap}_t
+$$
 
 * **Monetary Policy:** The central bank follows a Taylor rule for the nominal interest rate:
-  [
-  i_t = r_n + \pi_t + \phi_{\pi}(\pi_t-\bar{\pi}) + \phi_{y}\left(\frac{Y_t-Y_n}{Y_n}\right),
-  ]
-  where (\phi_\pi, \phi_y > 0) and (\bar{\pi}) is the inflation target.
+
+$$
+i_t = r_n + \pi_t + \phi_{\pi}(\pi_t-\bar{\pi}) + \phi_{y}\left(\frac{Y_t-Y_n}{Y_n}\right)
+$$
+
+where $\phi_\pi, \phi_y > 0$ and $\bar{\pi}$ is the inflation target.
 
 * **Output Determination:** Output each period is determined by a static IS relation with interest-sensitive investment and fiscal demand, solved conditional on the real interest rate.
 
@@ -42,9 +47,10 @@ source .venv/bin/activate      # macOS / Linux
 # .venv\Scripts\activate       # Windows
 
 pip install -r requirements.txt
-
 ```
+
 ## How To Run
+
 This program is operated from the command line.
 
 1. Navigate to the project root.
@@ -67,27 +73,27 @@ Each default can be modified:
 
 * **Number of periods (positional argument):**
 
-  ```bash
-  python main.py 25
-  ```
+```bash
+python main.py 25
+```
 
-  If provided, this must come first.
+If provided, this must come first.
 
 * **Alternative parameter file:**
 
-  ```bash
-  python main.py -p alt_params.csv
-  ```
+```bash
+python main.py -p alt_params.csv
+```
 
-  Must be located in the `resources/` folder.
+Must be located in the `resources/` folder.
 
 * **Alternative shock file:**
 
-  ```bash
-  python main.py -s alt_shocks.csv
-  ```
+```bash
+python main.py -s alt_shocks.csv
+```
 
-  Must also be located in `resources/`.
+Must also be located in `resources/`.
 
 ### Examples
 
@@ -127,13 +133,13 @@ The model prints a `pandas` `DataFrame` containing key macroeconomic variables:
 
 * **Y_n** — natural output
 * **r_n** — natural real interest rate
-* **pi_t** — inflation at time (t)
-* **pi_e** — expected inflation for period (t+1), formed at time (t)
-* **pi_e_used** — expected inflation used in the Phillips curve for period (t), i.e. ($E_{t-1}[\pi_t]$)
+* **pi_t** — inflation at time $t$
+* **pi_e** — expected inflation for period $t+1$, formed at time $t$
+* **pi_e_used** — expected inflation used in the Phillips curve for period $t$, i.e. $E_{t-1}[\pi_t]$
 * **i_t** — nominal interest rate
-* **Y_t** — output at time (t)
+* **Y_t** — output at time $t$
 
-If plotting is enabled (with flag --plot or -g), the program displays the time paths of inflation and expected inflation used in the Phillips curve.
+If plotting is enabled (with flag `--plot` or `-g`), the program displays the time paths of inflation and expected inflation used in the Phillips curve.
 
 ## Forthcoming Extensions
 
@@ -142,4 +148,3 @@ If plotting is enabled (with flag --plot or -g), the program displays the time p
 * Alternative monetary policy rules
 * Richer persistence mechanisms in output and inflation dynamics
 * Expanded financial or supply-side blocks
-
