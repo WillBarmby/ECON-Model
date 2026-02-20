@@ -1,10 +1,8 @@
 from pathlib import Path
 from config.paths import RESOURCES_DIR
 from csv_reader import read_parameters, validate_params
-from model import find_initial_state, apply_shocks, step
 from plots import display_plots
 from params import Params
-from state import State
 from cli import build_parser
 from simulation import run_simulation
 import pandas as pd
