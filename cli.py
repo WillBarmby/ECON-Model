@@ -40,4 +40,6 @@ def build_parser() -> argparse.ArgumentParser:
         help="plots the time series",
         action="store_true",
     )
+
+    parser.add_argument("--save", help="saves plots to Desktop", action="store_true")
     return parser

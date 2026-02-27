@@ -1,7 +1,7 @@
 from pathlib import Path
 from config.paths import RESOURCES_DIR
 from csv_reader import read_parameters, validate_params
-from plots import display_plots
+from plots import display_plots, make_figure
 from params import Params
 from cli import build_parser
 from simulation import run_simulation
@@ -28,6 +28,13 @@ def main() -> pd.DataFrame:
     df_final = df_final.rename(columns={"y_n": "Y_n", "y_t": "Y_t"})
     df_final = df_final[["Y_n", "r_n", "pi_t", "pi_e", "i_t", "Y_t", "pi_e_used"]]
     print(df_final)
+    if args.save:
+        fig, _ = make_figure(df=df_final)
+        fig.savefig(
+            Path.home() / "Desktop" / "output",
+            dpi=600,
+        )
+
     if args.plot:
         display_plots(df=df_final)
 
