@@ -2,6 +2,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from dataclasses import dataclass, field
 
+import matplotlib.ticker as mticker
+
 
 @dataclass
 class PlotInfo:
@@ -22,9 +24,41 @@ def plot_info(ax, info: PlotInfo):
     ax.legend()
 
 
-def make_figure(df: pd.DataFrame):
-    fig, axs = plt.subplot_mosaic([["Y", "Y"], ["i", "pi"]])
+def _configure_time_axis(axs: dict, df: pd.DataFrame, max_xticks: int = 25):
+    """
+    Make x-axis show every integer period for short runs,
+    but automatically thin labels for long runs.
+    """
+    # robustly infer index span even if index isn’t RangeIndex
+    x_min = int(df.index.min())
+    x_max = int(df.index.max())
+    n_periods = x_max - x_min + 1
 
+    for ax in axs.values():
+        ax.set_xlim(x_min, x_max)
+
+        # Integer ticks only
+        ax.xaxis.set_major_locator(
+            mticker.MaxNLocator(nbins=max_xticks, integer=True, min_n_ticks=2)
+        )
+
+        # If it's short, force every period tick
+        if n_periods <= max_xticks:
+            ax.xaxis.set_major_locator(mticker.MultipleLocator(1))
+
+
+def _configure_inflation_axis(ax):
+    """
+    Only the inflation subplot gets percent formatting.
+    Assumes pi is stored as a decimal (e.g., 0.025 for 2.5%).
+    """
+    ax.yaxis.set_major_formatter(mticker.PercentFormatter(xmax=1.0))
+
+
+def make_figure(df: pd.DataFrame):
+    fig, axs = plt.subplot_mosaic(
+        [["Y", "Y"], ["i", "pi"]], constrained_layout=True, figsize=(12, 7)
+    )
     specs = {
         "Y": PlotInfo(
             df=df[["Y_n", "Y_t"]],
@@ -47,7 +81,7 @@ def make_figure(df: pd.DataFrame):
             title="Inflation Rates",
             labels={
                 "pi_t": r"Inflation Rate ($\pi_t$)",
-                "pi_e_used": r"Expected Inflation Rate for Period($E_{t-1}[\pi_t]$)",
+                "pi_e_used": r"Expected Inflation Rate for Period ($E_{t-1}[\pi_t]$)",
             },
         ),
     }
@@ -55,7 +89,12 @@ def make_figure(df: pd.DataFrame):
     for key, info in specs.items():
         plot_info(axs[key], info)
 
-    fig.tight_layout()
+    # x-axis ticks: show all for small T, thin for big T
+    _configure_time_axis(axs, df, max_xticks=25)
+
+    # percent y-axis only for inflation
+    _configure_inflation_axis(axs["pi"])
+
     return fig, axs
 
 
